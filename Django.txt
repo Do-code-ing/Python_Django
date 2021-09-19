@@ -12,13 +12,13 @@ python -m django --version
 django-admin startproject mysite
 
 mysite/
-    manage.py # 프로젝트와 상호작용하는 커맨드라인의 유틸리티
-    mysite/ # 프로젝트를 위한 실제 Python 패키지들 저장
+    manage.py       # 프로젝트와 상호작용하는 커맨드라인의 유틸리티
+    mysite/         # 프로젝트를 위한 실제 Python 패키지들 저장
         __init__.py
         settings.py # 프로젝트의 환경 및 구성을 저장
-        urls.py # 프로젝트의 URL 선언을 저장(사이트의 목차)
-        asgi.py # 프로젝트를 서비스하기 위한 ASGI 호환 웹 서버의 진입점..?
-        wsgi.py # 프로젝트를 서비스하기 위한 WSGI 호환 웹 서버의 진입점..?
+        urls.py     # 프로젝트의 URL 선언을 저장(사이트의 목차)
+        asgi.py     # 프로젝트를 서비스하기 위한 ASGI 호환 웹 서버의 진입점..?
+        wsgi.py     # 프로젝트를 서비스하기 위한 WSGI 호환 웹 서버의 진입점..?
 
 5. 개발 서버
 manage.py runserver
@@ -43,3 +43,32 @@ polls/
     views.py
 
 이 디렉토리 구조는 투표 앱의 집이 되어줄 것이다.
+
+7. 첫 번째 뷰 작성하기
+
+polls/views.py 를 열고,
+django.http 에서 HttpResponse 를 불러오고,
+HttpResponse 객체를 반환하는 함수를 작성한다.
+
+polls/urls.py 을 만들고,
+django.urls 의 path,
+. 의 views 를 불러오고,
+urlpatterns 리스트를 만들고,
+그 안에 path 함수를 호출하여 URLResolver 객체를 저장한다.
+
+mysite/urls.py 를 열고,
+django.urls 의 include 를 불러오고,
+urlpatterns 에 방금 만든 것들을 찾을 수 있게,
+path("polls/", include("polls.urls"))
+와 같이 path 함수를 호출하여 URLResolver 객체를 저장한다.
+
+include() 함수는 다른 URLconf 들을 참조할 수 있도록 도와준다.
+polls 앱에 그 자체의 URLconf(polls/urls.py) 가 존재하는 한,
+/polls/, /fun_polls/, /content/polls/ 와 같은 경로, 또는 그 어떤 다른 root 경로에 연결하더라도, 앱은 잘 작동할 수 있다.
+include() 함수는 URL 패턴을 포함할 때마다 항상 사용해야 한다. (except, admin.site.urls)
+
+path() 함수에는 필수 인수 route 와 view, 2개의 선택 인수 kwargs 와 name 까지 총 4개가 있다.
+route: URL 패턴을 가진 문자열, urlpatterns 의 첫 번째 패턴부터 시작하여, 일치하는 패턴을 찾을 때 까지 요청된 URL 을 각 패턴 리스트의 순서대로 비교한다.
+view: 일치하는 패턴을 찾으면, HttpRequest 객체를 첫 번째 인수로 하고, 경로로 부터 캡쳐된 값을 키워드 인수로하여 특정한 view 함수를 호출한다.
+kwargs: 임의의 키워드 인수들을 목표한 view 에 사전형으로 전달한다.
+name: URL 에 이름을 지으면, 템플릿을 포함한 Django 어디에서나 명확하게 참조할 수 있다.
