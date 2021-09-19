@@ -1,0 +1,45 @@
+1. 가상 환경 설정
+python -m venv .venv
+
+2. Django 설치
+pip install Django
+
+3. Django 버젼 체크
+python -m django --version
+
+4. 프로젝트 만들기
+터미널에서 디렉토리 이동 후
+django-admin startproject mysite
+
+mysite/
+    manage.py # 프로젝트와 상호작용하는 커맨드라인의 유틸리티
+    mysite/ # 프로젝트를 위한 실제 Python 패키지들 저장
+        __init__.py
+        settings.py # 프로젝트의 환경 및 구성을 저장
+        urls.py # 프로젝트의 URL 선언을 저장(사이트의 목차)
+        asgi.py # 프로젝트를 서비스하기 위한 ASGI 호환 웹 서버의 진입점..?
+        wsgi.py # 프로젝트를 서비스하기 위한 WSGI 호환 웹 서버의 진입점..?
+
+5. 개발 서버
+manage.py runserver
+개발 서버는 경량 웹 서버다.
+Django에 포함되어 있어 아무 설정 없이 바로 개발에 사용할 수 있다.
+오직 개발 목적으로만 사용해야 한다. (운영 X)
+manage.py runserver 8080 (port 변경도 가능하다.)
+
+6. 설문조사 앱 만들기
+프로젝트는 특정 웹사이트의 구성 및 앱 모음이다.
+앱의 위치는 python path 에 있다면 어디든 상관없다.
+manage.py startapp polls
+
+polls/
+    __init__.py
+    admin.py
+    apps.py
+    migrations/
+        __init__.py
+    models.py
+    tests.py
+    views.py
+
+이 디렉토리 구조는 투표 앱의 집이 되어줄 것이다.
