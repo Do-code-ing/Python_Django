@@ -260,3 +260,37 @@
         
         - __startswith, __endswith
             찾으려는 내용의 시작 혹은 끝과 일치
+
+
+5. Django 관리자 소개
+
+    모델에 대한 관리용 인터페이스를 자동 생성하여 관리를 도와준다.
+
+    - 관리자 생성하기
+
+        $ python manage.py createsuperuser
+
+        Username, Email address, Password, Password(again) 을 입력한다.
+    
+    - 개발 서버 시작
+
+        $ python manage.py runserver
+
+        http://127.0.0.1:8000/admin 으로 접속한다.
+    
+    - 관리자 사이트 들어가기
+
+        아까 생성한 슈퍼유저(superuser) 계정으로 로그인한다.
+
+    - 관리 사이트에서 poll app 을 변경가능하도록 만들기
+
+        polls/admin.py 를 열고 다음 코드를 추가한다.
+
+        from .models import Question
+
+        admin.site.register(Question)
+    
+    - 자유로운 관리 기능을 탐색하기
+
+        Question 을 등록했으니, Django 가 이를 알아채고 관리 페이지에 표시한다.
+        내용을 확인해본다.
