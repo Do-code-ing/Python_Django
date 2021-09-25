@@ -44,10 +44,21 @@
     - DateTimeField
         날짜와 시간 필드를 표현한다.
     
+    - ForeignKey
+        각각의 Choice 가 Question 에 관계된다는 것을 Django 에게 알려준다.
+        다대일 관계일 때 사용한다.
+    
     각각의 Field 인스턴스의 이름인 question_texty, pub_data 는 기계가 읽기 좋은 형식의 데이터베이스 필드 이름이다.
     이 필드명을 Python 코드에서 사용할 수 있으며, 데이터베이스에서는 컬럼명으로 사용한다.
     
     몇몇의 Field 클래스들은 필수 인수가 필요하다. 예를 들어, CharField 의 경우 max_length 를 입력해 주어야 한다.
+
+    
+    - OnetoOneField
+        일대일 관계일 때 사용한다.
+    
+    - ManyToManyField
+        다대다 관계일 때 사용한다.
 
 
 3. 모델의 활성화
@@ -192,3 +203,60 @@
         return self.pub_date >= timezone.now() - datetime.timedelta(days=1)
     
     변경사항을 저장하고, 다시 shell 을 실행해보자.
+
+    >>> from polls.models import Choice, Question
+    >>> Question.objects.all()
+    <QuerySet [<Question: What's up?>]>     # __str__ 이 잘 작동한다.
+
+    >>> Question.objects.filter(id=1)       # filter 함수를 통해 원하는 데이터를 확인할 수 있다.
+    <QuerySet [<Question: What's up?>]>
+    >>> Question.objects.filter(question_text__startswith='What')
+    <QuerySet [<Question: What's up?>]>
+
+    >>> Question.objects.get(pk=1)          # pk: primary key, Question.objects.get(id=1) 과 동일하게 작동한다.
+    <Question: What's up?>
+
+    >>> q = Question.objects.get(pk=1)
+    >>> q.was_published_recently()
+    True                                    # 새로 만들어준 메소드 또한 잘 작동한다.
+
+    >>> q.choice_set.all()                  # ForeignKey 로 Question 에 각각의 Choice 들을 연결해줄 수 있는 set 을 확인할 수 있다.
+    <QuerySet []>
+
+    >>> q.choice_set.create(choice_text='Not much', votes=0)    # Choice 객체를 만들 수 있다.
+    <Choice: Not much>
+    >>> q.choice_set.create(choice_text='The sky', votes=0)
+    <Choice: The sky>
+
+    >>> c = q.choice_set.create(choice_text='Just hacking again', votes=0)
+    >>> c.question
+    <Question: What's up?>                          # Choice 객체의 question 이 무엇인지 확인할 수 있다.
+
+    >>> q.choice_set.all()
+    <QuerySet [<Choice: Not much>, <Choice: The sky>, <Choice: Just hacking again>]>
+    >>> q.choice_set.count()
+    3
+
+    >>> c = q.choice_set.filter(choice_text__startswith='Just hacking')
+    >>> c.delete()
+
+
+    - filter()
+        FROM abc WHERE here = "here"
+    
+    - exclude()
+        FROM abc WHERE NOT here = "here"
+    
+
+        - __exact       # 확실한 일치
+            abc.objects.get(id__exact=14)
+            abc.objects.get(id=14)          # exact 생략
+        
+        - __iexact      # 대소문자를 구분하지 않는 일치
+            abc.objects.get(name__iexact="John")    # john 이나 JOHN 과도 매치된다.
+
+        - __contains    # 내용을 포함하고 있는지
+            abc.objects.get(name__contains="J")     # John, James 등과 매치된다.
+        
+        - __startswith, __endswith
+            찾으려는 내용의 시작 혹은 끝과 일치
