@@ -1,0 +1,95 @@
+1. 뷰
+
+    뷰는 Django 어플리케이션이 일반적으로 특정 기능과 템플릿을 제공하는 웹페이지의 한 종류다.
+
+    - 블로그
+        1. Blog 홈페이지 - 가장 최근의 항목을 보여준다.
+        2. 항목 <세부> 페이지 - 하나의 항목에 연결하는 영구적인 링크(permalink)를 제공한다.
+        3. 연도별 축적 페이지 - 주어진 연도의 모든 월별 항목들을 표시한다.
+        4. 월별 축적 페이지 - 주어진 월의 날짜별 항목들을 표시한다.
+        5. 날짜별 축적 페이지 - 주어진 날짜의 모든 항목들을 표시한다.
+        6. 댓글 기능 - 특정 항목의 댓글을 다룰 수 있는 기능
+
+    - poll 어플리케이션
+        1. 질문 <색인> 페이지 - 최근의 질문들을 표시한다.
+        2. 질문 <세부> 페이지 - 질문 내용과, 투표할 수 있는 서식을 표시한다.
+        3. 질문 <결과> 페이지 - 특정 질문에 대한 결과를 표시한다.
+        4. 투표 기능 - 특정 질문에 대해 특정 선택을 할 수 있는 투표 기능을 제공한다.
+    
+    URL로 부터 뷰를 얻기 위해, Django 는 'URLconfs' 라는 것을 사용한다.
+    URLconfs 는 URL 패턴을 뷰에 연결한다.
+
+
+2. 뷰 추가하기
+
+    polls/views.py 를 열고,
+    HttpResponse 객체를 리턴해주는 detail, results, vote 뷰(함수)를 만든다.
+
+    polls/urls.py 를 열고,
+    방금 만들어준 뷰들을 인자로 하는 path 함수를
+    urlpatterns 에 저장한다.
+
+
+3. 뷰가 실제로 뭔가를 하도록 만들기
+
+    각 뷰는,
+    요청된 페이지의 내용이 담긴 HttpResponse 객체를 반환하거나,
+    Http404 같은 예외를 발생하게 해야한다.
+
+    뷰는 데이터베이스의 기록을 읽을 수도 있다.
+    뷰는 Django 나 제 3자가 Python 으로 만든 템플릿 시스템을 사용할 수도 있다.
+    뷰는 PDF 파일을 생성하거나, XML 을 출력하거나, 실시간으로 ZIP 파일을 만들 수 있다.
+    뷰는 Python 의 어떤 라이브러리라도 사용할 수 있다.
+
+
+    polls/views.py 를 열고,
+    models.py 에서 Question 을 import 한 뒤,
+    index 뷰를 다음과 같이 수정한다.
+
+    def index(request):
+        latest_question_list = Question.objects.order_by('-pub_date')[:5]
+        output = ', '.join([q.question_text for q in latest_question_list])
+        return HttpResponse(output)
+
+    
+    Python 코드와 디자인을 분리하도록 템플릿 시스템을 사용하자.
+
+    polls/templates/polls/index.html 을 만들고,
+    HTML 코드를 작성한다.
+
+    polls/views.py 를 열고,
+    방금 만든 템플릿을 사용하여 index 뷰를 업데이트 해보자.
+
+    from django.http import HttpResponse
+    from django.template import loader
+
+    from .models import Question
+
+
+    def index(request):
+        latest_question_list = Question.objects.order_by('-pub_date')[:5]
+        template = loader.get_template('polls/index.html')
+        context = {
+            'latest_question_list': latest_question_list,
+        }
+        return HttpResponse(template.render(context, request))
+
+    polls/index.html 템플릿을 불러온 후, context 를 전달한다.
+
+
+    - 지름길 render()
+
+        HttpResponse 개체를 돌려주는 구문은 자주 쓰는 용법으로, 간단하게 사용할 수 있도록
+        단축 기능(shortcuts)이 있다.
+        
+        from django.shortcuts import render
+
+        from .models import Question
+
+
+        def index(request):
+            latest_question_list = Question.objects.order_by('-pub_date')[:5]
+            context = {'latest_question_list': latest_question_list}
+            return render(request, 'polls/index.html', context)
+        
+        다른 뷰에 method stub 가 없다면, 더 이상 HttpResponse 를 유지할 필요가 없다.
