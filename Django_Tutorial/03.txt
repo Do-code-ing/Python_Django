@@ -79,7 +79,7 @@
 
     - 지름길 render()
 
-        HttpResponse 개체를 돌려주는 구문은 자주 쓰는 용법으로, 간단하게 사용할 수 있도록
+        HttpResponse 객체를 돌려주는 구문은 자주 쓰는 용법으로, 간단하게 사용할 수 있도록
         단축 기능(shortcuts)이 있다.
         
         from django.shortcuts import render
@@ -93,3 +93,49 @@
             return render(request, 'polls/index.html', context)
         
         다른 뷰에 method stub 가 없다면, 더 이상 HttpResponse 를 유지할 필요가 없다.
+
+
+4. 404 에러 일으키기
+
+    polls/views.py 를 열고,
+
+    from django.http import Http404
+    from django.shortcuts import render
+
+    from .models import Question
+    # ...
+    def detail(request, question_id):
+        try:
+            question = Question.objects.get(pk=question_id)
+        except Question.DoesNotExist:
+            raise Http404("Question does not exist")
+        return render(request, 'polls/detail.html', {'question': question})
+    
+    뷰는 요청된 질문의 ID 가 없을 경우 Http404 예외를 발생시킨다.
+
+    polls/templates/polls/detail.html 을 만들고,
+
+    {{ question }}
+
+    확인해보자.
+
+
+    - 지름길 get_object_or_404()
+
+        만약 객체가 존재하지 않을 때 get() 을 사용하여 Http404 예외를 발생시키는 것은 자주 사용되는 용법으로,
+        간단하게 사용할 수 있도록 shortcuts 을 제공한다.
+
+        polls/views.py 를 열고,
+
+        from django.shortcuts import get_object_or_404, render
+
+        from .models import Question
+        # ...
+        def detail(request, question_id):
+            question = get_object_or_404(Question, pk=question_id)
+            return render(request, 'polls/detail.html', {'question': question})
+
+        
+        비슷한 함수로, get_list_or_404() 함수가 있다.
+        get() 대신 filter() 를 쓴다는 것이 다르다.
+        리스트가 비어있을 경우 Http404 예외를 발생시킨다.
