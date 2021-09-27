@@ -139,3 +139,26 @@
         비슷한 함수로, get_list_or_404() 함수가 있다.
         get() 대신 filter() 를 쓴다는 것이 다르다.
         리스트가 비어있을 경우 Http404 예외를 발생시킨다.
+
+
+5. 템플릿 시스템 사용하기
+
+    polls/templates/polls/detail.html 을 열고,
+    다음과 같이 수정하자.
+
+    <h1>{{ question.question_text }}</h1>
+    <ul>
+    {% for choice in question.choice_set.all %}
+        <li>{{ choice.choice_text }}</li>
+    {% endfor %}
+    </ul>
+
+    
+    템플릿 시스템은 변수의 속성에 접근하기 위해서 점-탐색(dot-lookup) 문법을 사용한다.
+    {{ question.question_text }} 에서, question 객체에 대해
+    1. 사전형으로 탐색한다.
+    2. 실패한 경우, 속성값으로 탐색한다. (여기에서는 속성값에서 탐색이 완료된다.)
+    3. 실패한 경우, 리스트의 인덱스 탐색을 시도한다.
+
+    {% for choice in question.choice_set.all %} 에서,
+    question.choice_set.all 은 question.choice_set.all() 코드로 해석된다.
