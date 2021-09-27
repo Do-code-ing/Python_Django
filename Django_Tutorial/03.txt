@@ -162,3 +162,20 @@
 
     {% for choice in question.choice_set.all %} 에서,
     question.choice_set.all 은 question.choice_set.all() 코드로 해석된다.
+
+
+6. 템플릿에서 하드코딩된 URL 제거하기
+
+    polls/index.html 에서, 템플릿에 링크를 적으면,이 링크는 하드코딩되는 것이다.
+
+    <li><a href="/polls/{{ question.id }}/">{{ question.question_text }}</a></li>
+
+    이렇게 하면 URL 의 변동이 생겼을 때 바꾸는게 어려워진다.
+    이전에 polls.urls.py 에서 path() 함수에서 인수의 name 을 정의 했으므로,
+    {% url %} 템플릿 태그를 사용하여 url 설정에 정의된 특정한 URL 경로들의 의존성을 제거할 수 있다.
+
+    <li><a href="{% url 'detail' question.id %}">{{ question.question_text }}</a></li>
+
+    만약 뷰의 URL 을 바꾸고 싶다면, 이제 polls/urls.py 에서 바꾸면 된다. (specifics/)
+
+    path('specifics/<int:question_id>/', views.detail, name='detail'),
