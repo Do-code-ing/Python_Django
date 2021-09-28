@@ -53,3 +53,91 @@
     수천 줄의 코드를 작성해 놓았다면, 어느 것을 테스트해야 할 지 고르는 것도 쉽지 않다.
     그럴 때는 새로운 기능을 넣거나 버그를 수정하는 등, 코드를 변경할 일이 있을 때, 당신의 첫 테스트를 작성하는 것이 유익할 것이다.
 
+
+3. 첫 번째 테스트 작성하기
+
+    - 버그 식별하기
+        Question.was_published_recently() 메소드는 Question 의 pub_date 가 미래로 설정되어 있을 때도 True 를 반환한다.
+        이것은 옳지 못하다.
+        shell 을 사용해 미래의 날짜로 메소드를 실행해 버그를 확인해보자.
+
+        $ python manage.py shell
+
+        >>> import datetime
+        >>> from django.utils import timezone
+        >>> from polls.models import Question
+
+        새 Question 객체를 만들고, pub_date 를 미래로 설정한 뒤 확인해보자.
+
+        >>> future_question = Question(pub_date=timezone.now() + datetime.timedelta(days=30))   
+        >>> future_question.was_published_recently()
+        True
+
+    - 버그를 노출하는 테스트 만들기
+        문제를 테스트하기 위해 shell 에서 방금 수행한 작업을 테스트 자동화해보자.
+
+        polls/tests.py 를 열고 다음과 같이 작성해보자.
+
+        from django.test import TestCase
+        from django.utils import timezone
+        from .models import Question
+        import datetime
+
+
+        class QuestionModelTests(TestCase):
+
+            def test_was_published_recently_with_future_question(self):
+                time = timezone.now() + datetime.timedelta(day=30)
+                future_question = Question(pub_date=time)
+                self.assertIs(future_question.was_published_recently(), False)
+    
+    - 테스트 실행
+
+        $ python manage.py test polls
+
+        Creating test database for alias 'default'...                   # (3)
+        System check identified no issues (0 silenced).
+        F
+        ======================================================================
+        FAIL: test_was_published_recently_with_future_question (polls.tests.QuestionModelTests)     # (4, 5)
+        ----------------------------------------------------------------------
+        Traceback (most recent call last):
+        File "C:\Users\pc\Desktop\Python\Python_Django\mysite\polls\tests.py", line 12, in test_was_published_recently_with_future_question
+            self.assertIs(future_question.was_published_recently(), False)
+        AssertionError: True is not False                                                           # (6)
+
+        ----------------------------------------------------------------------
+        Ran 1 test in 0.001s
+
+        FAILED (failures=1)
+        Destroying test database for alias 'default'...
+
+        1. manage.py test polls 는 polls 어플리케이션에서 테스트를 찾는다.
+        2. django.test.TestCase 클래스의 서브 클래스를 찾는다.
+        3. 테스트 목적으로 특별한 데이터베으스를 만든다.
+        4. 테스트 메소드 - 이름이 test 로 시작하는 것들을 찾는다.
+        5. test_was_published_recently_with_future_question 에서 pub_date 필드가 30일 미래인 Question 인스턴스를 생성한다.
+        6. assertIs() 메소드를 사용하여, False 가 반환되길 기대했으나 True 로 반환된 것을 확인했다.
+    
+    - 버그 수정
+        Question.was_published_recently() 는 pub_date 가 미래에 있다면 False 를 반환해야 한다.
+        models.py 에서 날짜가 과거에 있을 때에만 True 를 반환하도록 메소드를 수정해보자.
+
+        polls/models.py 를 열고 다음과 같이 수정하자.
+
+        def was_published_recently(self):
+            now = timezone.now()
+            return now - datetime.timedelta(days=1) <= self.pub_date <= now
+        
+        다시 테스트를 실행해보자.
+
+        Creating test database for alias 'default'...
+        System check identified no issues (0 silenced).
+        .
+        ----------------------------------------------------------------------
+        Ran 1 test in 0.001s
+
+        OK
+        Destroying test database for alias 'default'...
+
+        코드에서 버그를 수정하고 테스트를 통과했다.
