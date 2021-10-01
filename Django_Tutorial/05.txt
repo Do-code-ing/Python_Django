@@ -1,6 +1,6 @@
 1. 테스트 자동화 소개
 
-    - 테스트 자동화란?
+    1. 테스트 자동화란?
 
         테스트는 다양한 수준에서 작동한다.
 
@@ -9,7 +9,7 @@
 
         이전에 shell 을 사용하여 메소드의 동작을 검사하거나, 어플리케이션을 실행하고 어떻게 작동하는지 확인하기 위해 데이터를 입력해서 테스트했던 것과 크게 다르지 않다.
     
-     - 테스트를 만들어야 하는 이유
+    2. 테스트를 만들어야 하는 이유
 
         테스트를 통해 시간을 절약 할 수 있다.
 
@@ -20,7 +20,7 @@
 
         이 수동 테스트 작업을 자동화하면 시간을 많이 아낄 수 있다.
 
-    - 테스트는 문제르 그저 식별하는 것이 아니라 예방한다.
+    3. 테스트는 문제르 그저 식별하는 것이 아니라 예방한다.
 
         테스트가 없다면, 어플리케이션의 목적 또는 의도된 동작이 다소 불투명할 수 있다.
         심지어 자신의 코드가 정확히 무엇을 하고 있는지 알아내려고 노력해야 될 수도 있다.
@@ -28,13 +28,13 @@
         테스트는 이 불투명함을 바꾼다. 내부에서 코드를 밝혀내고, 어떤 것이 잘못 될 때,
         그것이 잘못되었다는 것을 깨닫지 못했다고 할지라도, 잘못된 부분에 빛을 집중시킨다.
 
-    - 테스트가 코드를 더 매력적으로 만든다.
+    4. 테스트가 코드를 더 매력적으로 만든다.
 
         "Code without tests is broken by design." - Jacob Kaplan-Moss (Django's orginal developers)
         
         테스트 작성을 시작해야하는 또 다른 이유는 다른 개발자들이 당신의 소프트웨어를 사용하는 것을 진지하게 고려하기 전에 테스트 코드를 보고 싶어한다.
     
-    - 테스트는 팀이 함께 일하는 것을 돕는다.
+    5. 테스트는 팀이 함께 일하는 것을 돕는다.
 
         복잡한 어플리케이션의 경우, 팀별로 유지 관리가 된다.
         테스트는 동료가 실수로 코드를 손상시키지 않는다는 것을 보증한다. (당신이 코드를 망가트리는 것도)
@@ -56,7 +56,8 @@
 
 3. 첫 번째 테스트 작성하기
 
-    - 버그 식별하기
+    1. 버그 식별하기
+
         Question.was_published_recently() 메소드는 Question 의 pub_date 가 미래로 설정되어 있을 때도 True 를 반환한다.
         이것은 옳지 못하다.
         shell 을 사용해 미래의 날짜로 메소드를 실행해 버그를 확인해보자.
@@ -73,7 +74,8 @@
         >>> future_question.was_published_recently()
         True
 
-    - 버그를 노출하는 테스트 만들기
+    2. 버그를 노출하는 테스트 만들기
+
         문제를 테스트하기 위해 shell 에서 방금 수행한 작업을 테스트 자동화해보자.
 
         polls/tests.py 를 열고 다음과 같이 작성해보자.
@@ -91,7 +93,7 @@
                 future_question = Question(pub_date=time)
                 self.assertIs(future_question.was_published_recently(), False)
     
-    - 테스트 실행
+    3. 테스트 실행
 
         $ python manage.py test polls
 
@@ -119,7 +121,8 @@
         5. test_was_published_recently_with_future_question 에서 pub_date 필드가 30일 미래인 Question 인스턴스를 생성한다.
         6. assertIs() 메소드를 사용하여, False 가 반환되길 기대했으나 True 로 반환된 것을 확인했다.
     
-    - 버그 수정
+    4. 버그 수정
+
         Question.was_published_recently() 는 pub_date 가 미래에 있다면 False 를 반환해야 한다.
         models.py 에서 날짜가 과거에 있을 때에만 True 를 반환하도록 메소드를 수정해보자.
 
@@ -143,18 +146,224 @@
         코드에서 버그를 수정하고 테스트를 통과했다.
     
 
-4. 보다 포괄적인 테스트
+    5. 보다 포괄적인 테스트
 
-    메소드 동작을 보다 포괄적으로 테스트하기 위해 동일한 클래스에 두 가지 테스트 메소드를 추가하자.
+        메소드 동작을 보다 포괄적으로 테스트하기 위해 동일한 클래스에 두 가지 테스트 메소드를 추가하자.
 
-    polls/tests.py 를 열고, 다음과 같이 수정하자.
+        polls/tests.py 를 열고, 다음과 같이 수정하자.
 
-    def test_was_published_recently_with_old_question(self):            # 현재 시각보다 1일 이상된 질문에 대해 False 를 반환하는지
-        time = timezone.now() - datetime.timedelta(days=1, seconds=1)
-        old_question = Question(pub_date=time)
-        self.assertIs(old_question.was_published_recently(), False)
+        def test_was_published_recently_with_old_question(self):            # 현재 시각보다 1일 이상된 질문에 대해 False 를 반환하는지
+            time = timezone.now() - datetime.timedelta(days=1, seconds=1)
+            old_question = Question(pub_date=time)
+            self.assertIs(old_question.was_published_recently(), False)
 
-    def test_was_published_recently_with_recent_question(self):         # 현재 시각과 1일 이상 차이나지 않는 질문에 대해 True 를 반환하는지
-        time = timezone.now() - datetime.timedelta(hours=23, minutes=59, seconds=59)
-        recent_question = Question(pub_date=time)
-        self.assertIs(recent_question.was_published_recently(), True)
+        def test_was_published_recently_with_recent_question(self):         # 현재 시각과 1일 이상 차이나지 않는 질문에 대해 True 를 반환하는지
+            time = timezone.now() - datetime.timedelta(hours=23, minutes=59, seconds=59)
+            recent_question = Question(pub_date=time)
+            self.assertIs(recent_question.was_published_recently(), True)
+
+
+4. 뷰 테스트
+
+    설문조사 어플리케이션은 상당히 대충대충 만들어졌다.
+    pub_date 가 미래에 있는 질문의 경우, 그 시기가 오기 전에는 보이지 않아야 하고, 그 시기부터 질문이 게시되어야 한다.
+
+    1. 뷰에 대한 테스트
+
+        앞서 테스트를 먼저 작성하고, 코드를 수정했다.
+        순서는 사실 중요하지 않다.
+
+        이번에는 웹 브라우저를 통해 사용자가 경험하는대로 동작을 확인해보자.
+
+        버그를 수정하기 전에 우리가 사용할 수 있는 도구를 살펴보자.
+
+    2. 장고의 테스트 클라이언트
+
+        Django 는 뷰 레벨에서 코드와 상호 작용하는 사용자를 시뮬레이트하기 위해 테스트 클라이언트 클래스 Client 를 제공한다.
+        이 테스트 클라이언트를 tests.py, shell 에서 사용할 수 있다.
+
+        shell 을 이용해서 해보자.
+        shell 에 먼저 테스트 환경을 구성해보자.
+
+        $ python manage.py shell
+
+        >>> from django.test.utils import setup_test_environment
+        >>> setup_test_environment()
+
+        response.context 와 같은 response 의 추가적인 속성을 사용할 수 있도록,
+        setup_test_environment() 를 사용하여 템플릿 렌더러를 설치한다.
+        이 메소드는 테스트 데이터베이스를 셋업하지 않는다.
+        그렇기 때문에 테스트는 현재 사용중인 데이터베이스 위에서 돌게된다.
+
+        테스트 클라이언트 클래스를 import 해보자.
+        (나중에는 test.py 에서는 django.test.TestCase 클래스에 같이 딸려 오는 클라이언트를 사용한다.)
+
+        >>> from django.test import Client
+        >>> client = Client()               # 사용할 클라이언트 인스턴스 생성
+
+        이런 것들이 준비가 되었다면 클라이언트에게 일을하라고 시킬 수 있다.
+
+        >>> response = client.get('/')      # '/' 에서 요청을 받는다. 그러나 404 가 기대된다.
+        Not Found: /
+        >>> response.status_code
+        404
+
+        >>> from django.urls import reverse     # 대신에 '/polls/' 에서 무언가를 찾아야 한다. 하드 코딩 대신에 reverse() 를 사용하자.
+        >>> response = client.get(reverse('polls:index'))
+        >>> response.status_code
+        200
+        >>> response.content
+        b'\n    <ul>\n    \n        <li><a href="/polls/1/">What&#x27;s up?</a></li>\n    \n    </ul>\n\n'
+        >>> response.context['latest_question_list']
+        <QuerySet [<Question: What's up?>]>
+
+    
+    3. 뷰 개선시키기
+
+        설문 조사 목록에 아직 게시되지 않은 설문 조사(pub_date 가 미래인)가 표시된다.
+        수정하자.
+
+        polls/views.py 를 열고, 다음과 같이 수정하자.
+
+        from django.utils import timezone
+
+        def get_queryset(self):
+            return Question.objects.filter(pub_date__lte=timezone.now()).order_by('-pub_date')[:5]
+        
+        return 문의 코드는 timezone.now 보다 pub_date 가 작거나 같은 Question 을 포함하는 queryset 을 반환한다.
+        그리고 5개까지만 반환한다.
+
+    4. 새로운 뷰 테스트
+
+        이제 runserver 를 실행하면 브라우저에 사이트가 적재되고,
+        과거와 미래 날짜의 Question 들이 생성되고, 공개된 것들만 리스트에 나타나는 것을 확인함으로써
+        예상대로 동작하는 것에 만족할 수 있다.
+
+        앞으로 어던 변화를 일으키더라도 이러한 점에 영향을 끼치지 않도록
+        shell 에 기초를 둔 테스트를 작성하자.
+
+        from django.urls import reverse
+
+        def create_question(question_text, days):
+            # question 을 만드는 함수
+            time = timezone.now() + datetime.timedelta(days=days)
+            return Question.objects.create(question_text=question_text, pub_date=time)
+
+
+        class QuestionModelTests(TestCase):
+
+            def test_no_question(self):
+                response = self.client.get(reverse("polls:index"))
+                self.assertEqual(response.status_code, 200)
+                self.assertContains(response, "No polls are available.")
+                self.assertQuerysetEqual(response.context["latest_question_list"], [])
+
+            def test_past_question(self):
+                question = create_question(question_text="Past question.", days=-30)
+                response = self.client.get(reverse("polls:index"))
+                self.assertQuerysetEqual(
+                    response.context["latest_question_list"],
+                    [question],
+                )
+
+            def test_future_question(self):
+                create_question(question_text="Future question.", days=30)
+                response = self.client.get(reverse("polls:index"))
+                self.assertContains(response, "No polls are available.")
+                self.assertQuerysetEqual(response.context["latest_question_list"], [])
+
+            def test_future_question_and_past_question(self):
+                question = create_question(question_text="Past question.", days=-30)
+                create_question(question_text="Future question.", days=30)
+                response = self.client.get(reverse('polls:index'))
+                self.assertQuerysetEqual(
+                    response.context['latest_question_list'],
+                    [question],
+                )
+
+            def test_two_past_questions(self):
+                question1 = create_question(question_text="Past question 1.", days=-30)
+                question2 = create_question(question_text="Past question 2.", days=-5)
+                response = self.client.get(reverse('polls:index'))
+                self.assertQuerysetEqual(
+                    response.context['latest_question_list'],
+                    [question2, question1],
+                )
+
+        - test_no_question
+            1. 질문을 생성하지는 않지만 메세제 및 latest_question_list 가 비어있음을 확인한다.
+            2. django.test.TestCase 클래스는 몇가지 추가적인 선언 메소드를 제공한다.
+            3. assertContains() 와 assertQuerysetEqual() 등이 있다.
+
+        - test_past_question
+            1. pub_date 가 과거인 질문을 생성한다.
+            2. 그 질문이 리스트에 나타나는지 확인한다.
+        
+        - test_future_question
+            1. pub_date 가 미래인 질문을 생성한다.
+            2. 데이터베이스는 각 테스트 메소드마다 재설정되므로 첫 번째 질문은 더 이상 존재하지 않으므로 다시 인덱스에 질문이 없어야 한다.
+    
+    5. DetailView 테스트 하기
+
+        지금까지 만든 것은 잘 작동한다.
+        그러나 미래의 설문 목록들은 목록에 나타나지는 않지만,
+        사용자가 URL 을 알고 있거나, 추측하면 접근할 수 있다.
+        그래서 DetailView 에 비슷한 제약 조건을 추가할 필요가 있다.
+
+        polls/views.py 를 열고, 다음과 같이 수정한다.
+
+        class DetailView(generic.DetailView):
+            ...
+            def get_queryset(self):
+                return Question.objects.filter(pub_date__lte=timezone.now())
+        
+        그 다음, pub_date 가 과거인 질문이 표시될 수 있고,
+        pub_date 가 미래인 Question 이 표시되지 않는 지 확인하기 위해 몇 가지 테스트틀 추가해야 한다.
+
+        polls/tests.py 를 열고, 다음 코드를 추가한다.
+
+        class QuestionDetailViewTests(TestCase):
+
+            def test_future_question(self):
+                # pub_date 가 미래인 Question 을 만들고,
+                # detail view 에서 그 Question 에 접근하면 404 not found 를 발생시킨다.
+                future_question = create_question(
+                    question_text='Future question.', days=5)
+                url = reverse('polls:detail', args=(future_question.id,))
+                response = self.client.get(url)
+                self.assertEqual(response.status_code, 404)
+
+            def test_past_question(self):
+                # pub_date 가 과거인 Question 을 만들고,
+                # detail view 에서 그 Question 에 접근하면 그 Question 의 text 를 보여준다.
+                past_question = create_question(
+                    question_text='Past Question.', days=-5)
+                url = reverse('polls:detail', args=(past_question.id,))
+                response = self.client.get(url)
+                self.assertContains(response, past_question.question_text)
+        
+        - test_future_question
+            1. pub_date 가 미래인 Question 을 만든다.
+            2. detail view 에서 그 Question 에 접근한다.
+            3. 404 not found 를 발생시키고, 잘 발생했는지 확인한다.
+
+        - test_past_question
+            1. pub_date 가 과거인 Question 을 만든다.
+            2. detail view 에서 그 Question 에 접근한다.
+            3. 그 Question 의 text 를 보여주고, 잘 보여줬는지 확인한다.
+
+    6. 더 많은 테스트를 위한 아이디어
+
+        get_queryset 메소드를 ResultsView 에 추가하고, 그 뷰에 대한 새로운 테스트 클래스를 생성해야 한다.
+        그것은 방금 만든 것과 매우 유사하다. (그리고 이 작업은 반복될 것이다.)
+
+        테스트를 추가하면서 다른 방법으로 어플리케이션을 개선할 수도 있다.
+        예를 들어, 'Choice' 가 없는 사이트에 'Question' 을 게시할 수 없어야 한다.
+        그래서 뷰를 확인하고 그러한 Question 을 배제해야 할 것이다.
+
+        일반 사용자가 아닌 로그인 한 관리자는 게시되지 않은 'Question' 을 볼 수 있어야 한다.
+        소프트웨어를 추가하기 위해 필요한 무엇이든 테스트를 수반해야 한다.
+
+        어느 순간엔 너무 많은 테스트 코드들을 보고 관리하기 힘들만큼 너무 비대해지는 것이 아닌가 생각이 들 수 있다.
+
+

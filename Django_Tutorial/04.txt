@@ -118,7 +118,9 @@
     2. 불필요한 오래된 뷰 중 일부를 삭제한다.
     3. Django 의 제너릭 뷰를 기반으로 새로운 뷰를 도입한다.
 
-    - URLconf 수정
+
+    1. URLconf 수정
+
         polls/urls.py 를 열어 URLconf 를 수정한다.
 
         urlpatterns = [
@@ -128,7 +130,7 @@
             path("<int:question_id>/vote/", views.vote, name="vote"),
         ]
 
-    - views 수정
+    2. views 수정
 
         class IndexView(generic.ListView):
             template_name = "polls/index.html"
