@@ -1,0 +1,26 @@
+1. 앱의 모양과 느낌을 원하는 대로 바꿔보세요.
+
+    polls/static 디렉토리를 만든다.
+    polls/templates 안의 템플릿을 찾는 것과 비슷하게 정적 파일을 찾는다.
+
+    Django 가 정적 파일을 찾을 때, 이름이 동일한 다른 파일을 구별을 할 수 없다.
+    Django 가 올바른 파일을 가리키도록 보장할 수 있는 방법이 'namespace' 다.
+
+    polls/static/polls/style.css 를 만들고 연 뒤, 다음과 같이 작성한다.
+
+    li a {
+        color: green;
+    }
+
+    polls/templates/polls/index.html 을 열고, 맨 위에 다음 코드를 추가한다.
+
+    {% load static %}
+
+    <link rel="stylesheet" type="text/css" href="{% static 'polls/style.css' %}">
+
+    {% load static %} 태그는 정적 파일의 절대 URL 을 생성한다.
+    개발에 필요한 것은 이것이 전부다.
+    서버를 시작해보자.
+
+    $ python manage.py runserver
+
