@@ -92,3 +92,54 @@
 
     class ChoiceInline(admin.TabularInline):
         #...
+
+
+3. 관리자 변경 목록(change list) 커스터마이징
+
+    Question 관리 페이지가 괜찮아 보이므로,
+    시스템의 모든 Question 들을 표시하는 변경 목록 페이지를 조정하자.
+    list_display admin 옵션을 사용해보자.
+
+    polls/admin.py 를 열고, QuestionAdmin 클래스를 다음 내용을 추가하자.
+
+    class QuestionAdmin(admin.ModelAdmin):
+        # ...
+        list_display = ('question_text', 'pub_date', 'was_published_recently')
+
+    was_published_recently() 메소드 또한 표시 될 수 있다.
+    was_published_recently 헤더를 제외하고 그 값으로 정렬하기 위해 열 머리글을 클릭할 수 있다.
+    왜냐하면 임의의 메소드의 출력에 의한 정렬은 지원되지 않기 때문이다.
+    display() 데코레이터를 이용하여 개선할 수 있다.
+
+    polls/models.py 를 열고, 다음의 코드를 추가하자.
+
+    from django.contrib import admin
+
+    class Question(models.Model):
+        # ...
+        @admin.display(
+            boolean=True,
+            ordering='pub_date',
+            description='Published recently?',
+        )
+        def was_published_recently(self):
+            now = timezone.now()
+            return now - datetime.timedelta(days=1) <= self.pub_date <= now
+    
+
+    polls/admin.py 를 열고,
+    Question 변경 목록 페이지에 개선점을 추가하자.
+    list_filter 를 QuestionAdmin 에 추가하자.
+
+    list_filter = ['pub_date']
+
+    이제 pub_date 필드로 필터링할 수 있게 해주는 《Filter》 사이드 바가 추가되었다.
+
+    polls/admin.py 를 열고,
+    검색 기능을 추가해보자.
+
+    search_fields = ['question_text']
+
+    이제 목록 맨 위에 검색 창이 추가되었다.
+    누군가 검색어를 입력하면, question_text 필드를 검색한다.
+
