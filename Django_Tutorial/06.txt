@@ -18,9 +18,37 @@
 
     <link rel="stylesheet" type="text/css" href="{% static 'polls/style.css' %}">
 
-    {% load static %} 태그는 정적 파일의 절대 URL 을 생성한다.
+    {% load static %} 템플릿 태그는 정적 파일의 절대 URL 을 생성한다.
     개발에 필요한 것은 이것이 전부다.
     서버를 시작해보자.
 
     $ python manage.py runserver
 
+    http://localhost:8000/polls/ 를 열고 새로고침하면,
+    링크 글씨의 색이 녹색으로 표시된 것을 볼 수 있으며,
+    이는 스타일시트가 올바르게 적재된 것을 의미한다.
+
+
+2. 배경 이미지 추가하기
+
+    이미지 용 하위 디렉토리를 만들자.
+    polls/static/polls/ 디렉토리에 images 서브 디렉토리를 만들고,
+    이 디렉토리 안에 background.gif 라는 이미지를 넣어보자.
+
+    polls/static/polls/style.css 에 다음 내용을 추가하자.
+
+    body {
+        background: white url("images/background.gif") no-repeat;
+    }
+
+    http://localhost:8000/polls/ 을 열고 새로고침하면,
+    화면의 왼쪽 상단에 배경이 나타날 것이다.
+
+    {% static %} 템플릿 태그는,
+    스타일시트와 같이 Django 에서 생성되지 않은 정적 파일에서 사용할 수 없다.
+    항상 상대 경로를 사용하여 정적 파일을 서로 연결해야 한다.
+    그러면 정적 파일의 여러 경로를 수정하지 않고도,
+    STATIC_URL(정적 템플릿 태그가 URL 을 생성하는 데 사용)을 변경할 수 있기 때문이다.
+
+    지금까지의 내용은 기본이다.
+    프레임워크에 포함된 설정 및 다른 것들에 대한 자세한 내용은 좀 더 공부해보자.
