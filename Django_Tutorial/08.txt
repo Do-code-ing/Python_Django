@@ -4,3 +4,44 @@
     PyPI(Python Package Index) 에는 Python 프로그램에서 사용할 수 있는 광범위한 패키지가 있다.
     우리가 만든 앱을 다른 사람들이 재사용할 수 있게 패키징해보자.
 
+
+2. 프로젝트와 재사용가능한 앱
+
+    mysite/
+        manage.py
+        mysite/
+            __init__.py
+            settings.py
+            urls.py
+            asgi.py
+            wsgi.py
+        polls/
+            __init__.py
+            admin.py
+            apps.py
+            migrations/
+                __init__.py
+                0001_initial.py
+            models.py
+            static/
+                polls/
+                    images/
+                        background.gif
+                    style.css
+            templates/
+                polls/
+                    detail.html
+                    index.html
+                    results.html
+            tests.py
+            urls.py
+            views.py
+        templates/
+            admin/
+                base_site.html
+    
+    프로젝트와 polls 어플리케이션은 분리가 명확하게 되어있다.
+    polls 어플리케이션의 모든 부분들은 polls 디렉토리에 있다.
+    polls 디렉토리를 바로 재사용할 수 있다는 뜻이다.
+    다른 사람들이 쉽게 사용할 수 있도록 앱을 패키징하자.
+
