@@ -173,4 +173,21 @@
 
 5. 여러분의 패키지 사용하기
 
+    우리가 polls 디렉토리를 프로젝트 바깥으로 이동시켰으므로, 작동하지 않는다.
+    우리의 새 django-polls 패키지를 설치하여 이 문제를 해결하자.
+
+    - 유저 라이브러리 설치하기
+        다음 단계는 django-polls 를 사용자 라이브러리로 설치한다.
+        사용자 단위 설치는 관리자 권한 접근이 안되는 시스템뿐만 아니라,
+        시스템 서비스나 다른 사용자들의 영향으로부터 패키지를 보호하는 것 같은 이점이 많다.
+
+    1. pip 를 이용하여 패키지를 설치한다.
+
+        $ python -m pip install --user django-polls/dist/django-polls-0.1.tar.gz
     
+    2. 운이 따라준다면, Django 프로젝트는 이제 잘 작동할 것이다. 서버를 실행해 확인해보자.
+
+    3. pip 를 사용해 패키지를 삭제
+        
+        $ python -m pip uninstall django-polls
+
