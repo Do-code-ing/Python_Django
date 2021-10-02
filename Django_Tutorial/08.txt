@@ -170,3 +170,7 @@
     
     더 자세한 정보는 Python 의 프로젝트 패키징 및 배포에 관한 튜토리얼 https://packaging.python.org/distributing/ 을 참조하자.
 
+
+5. 여러분의 패키지 사용하기
+
+    
