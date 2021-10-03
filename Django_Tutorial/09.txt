@@ -41,3 +41,16 @@
     - 아직 문서화되지 않은 Django 의 기능을 문서화
     - 새로운 기능이 추가되거나 Django API 또는 동작이 변경됨에 따라 새로운 기능에 대한 문서 추가
 
+
+4. 문서의 위치 (Where to get it)
+
+    1. 웹
+
+        Django 최신 버전 문서는 https://docs.djangoproject.com/en/dev/ 에 있다.
+
+    2. 일반 텍스트
+
+        Django 공식 릴리스를 사용하고 있다면,
+        코드의 압축된 패키지(tarball)에 docs/ 디렉토리가 있으며,
+        그곳에 해당 릴리스 문서가 있다.
+    
